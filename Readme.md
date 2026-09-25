@@ -7,7 +7,7 @@ Repositorio de nuestro proyecto integrador FarmaCarlo. Contiene la configuracion
 - Framework Web / API: Flask
 - Base de Datos: MySQL / MariaDB
 - Editor de Codigo: Visual Studio Code
-- Dispositivo de Prueba: Telefono Android fisico
+- Dispositivo de Prueba: Telefono iphone fisico
 
 ## Estructura del Proyecto
 - Conexion/: Archivos de conexion a la base de datos.
