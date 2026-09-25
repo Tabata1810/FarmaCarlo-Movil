@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Lista de Productos</h2>
+
+{% if productos %}
+<table border="1" align="center">
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Cantidad</th>
+        <th>Precio</th>
+    </tr>
+
+    {% for producto in productos %}
+    <tr>
+        <td>{{ producto.get_id() }}</td>
+        <td>{{ producto.get_nombre() }}</td>
+        <td>{{ producto.get_cantidad() }}</td>
+        <td>{{ producto.get_precio() }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No hay productos registrados.</p>
+{% endif %}
+
+{% endblock %}

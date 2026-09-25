@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .seccion-ventas {
+        background: white;
+        border-radius: 30px;
+        padding: 40px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        border: 1px solid var(--celeste-bebe);
+    }
+
+    .card-resumen-venta {
+        background: linear-gradient(135deg, var(--azul-elegante) 0%, #2c5d83 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 25px;
+        border-bottom: 5px solid var(--dorado-espejo);
+    }
+
+    .form-select, .form-control {
+        border-radius: 12px;
+        border: 2px solid #eee;
+        padding: 12px;
+    }
+
+    .btn-vender {
+        background-color: var(--dorado-espejo);
+        color: var(--azul-elegante);
+        font-weight: 700;
+        border-radius: 15px;
+        padding: 15px 30px;
+        width: 100%;
+        border: none;
+        text-transform: uppercase;
+    }
+
+    .sticker-folio {
+        background: var(--azul-elegante);
+        color: var(--dorado-espejo);
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        border: none;
+    }
+
+    .tabla-historial {
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #eee;
+    }
+</style>
+
+<div class="container">
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="seccion-ventas">
+                <h3 class="mb-4" style="color: var(--azul-elegante);">
+                    <i class="bi bi-cart-plus me-2"></i>Nueva Venta
+                </h3>
+                <form action="{{ url_for('manejar_ventas') }}" method="POST">
+                    <input type="hidden" name="accion" value="agregar">
+                    <div class="mb-4">
+                        <label class="fw-bold small mb-2">Producto</label>
+                        <select name="id_producto" class="form-select" required>
+                            <option value="">-- Seleccionar --</option>
+                            {% for p in productos %}
+                            <option value="{{ p.id }}">{{ p.nombre }} - ${{ p.precio }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <label class="fw-bold small mb-2">Cantidad</label>
+                            <input type="number" name="cantidad" class="form-control" value="1" min="1">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-vender">Añadir a la lista</button>
+                </form>
+
+                {% if carrito %}
+                <hr>
+                <div class="mt-4">
+                    <h5 class="small fw-bold mb-3">🛒 Lista de Compra:</h5>
+                    <table class="table table-sm small">
+                        <thead><tr><th>Prod.</th><th>Cant.</th><th>Sub.</th></tr></thead>
+                        <tbody>
+                            {% for item in carrito %}
+                            <tr><td>{{ item.nombre }}</td><td>{{ item.cantidad }}</td><td>${{ item.subtotal }}</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                    <form action="{{ url_for('manejar_ventas') }}" method="POST" class="mt-3">
+                        <input type="hidden" name="accion" value="finalizar">
+                        <label class="small fw-bold">Asignar a Cliente:</label>
+                        <select name="id_cliente" class="form-select mb-2" required>
+                            <option value="">-- Seleccionar Cliente --</option>
+                            {% for c in clientes %}
+                            <option value="{{ c.id_cliente }}">{{ c.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success flex-grow-1 fw-bold">COBRAR TODO</button>
+                            <button type="submit" name="accion" value="limpiar" class="btn btn-outline-danger btn-sm">Borrar</button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card-resumen-venta mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">Resumen de Hoy</h5>
+                        <p class="mb-0 opacity-75 small">Ventas realizadas</p>
+                    </div>
+                    <h2 class="fw-bold mb-0">{{ lista_ventas|length }}</h2>
+                </div>
+                <div class="mt-3 text-end">
+                    <a href="{{ url_for('descargar_reporte_ventas') }}" class="btn btn-light btn-sm fw-bold">
+                        <i class="bi bi-file-earmark-pdf-fill"></i> PDF del Día
+                    </a>
+                </div>
+            </div>
+
+            <div class="seccion-ventas">
+                <h3 class="mb-4" style="color: var(--azul-elegante);">Historial de Detalles</h3>
+                <div class="table-responsive tabla-historial">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Detalle</th>
+                                <th>Cliente</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for v in lista_ventas %}
+                            <tr>
+                                <td>
+                                    <button class="sticker-folio" data-bs-toggle="modal" data-bs-target="#modalV{{ v.id_venta }}">
+                                        #D-{{ v.id_venta }}
+                                    </button>
+                                </td>
+                                <td>{{ v.cliente_nombre }}</td>
+                                <td class="text-end fw-bold text-success">${{ v.total }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for v in lista_ventas %}
+<div class="modal fade" id="modalV{{ v.id_venta }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="border-radius: 20px; border: none; color: #333;">
+            <div class="modal-header" style="background: #2c5d83; color: white; border-radius: 20px 20px 0 0;">
+                <h5 class="modal-title">Detalle #D-{{ v.id_venta }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-start">
+                <div class="mb-3">
+                    <p class="mb-1"><strong>Cliente:</strong> {{ v.cliente_nombre }}</p>
+                    <p class="small text-muted mb-0"><strong>Fecha:</strong> {{ v.fecha }}</p>
+                </div>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th class="text-center">Cant.</th>
+                                <th class="text-end">Precio U.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in v.detalles %}
+                            <tr>
+                                <td>{{ d.producto_nombre }}</td>
+                                <td class="text-center">{{ d.cantidad }}</td>
+                                <td class="text-end">${{ d.precio }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="fw-bold" style="color: #2c5d83;">TOTAL:</span>
+                    <h3 class="fw-bold mb-0 text-success">${{ v.total }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
