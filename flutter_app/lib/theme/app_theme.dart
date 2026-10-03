@@ -1,12 +1,25 @@
+// Archivo: lib/theme/app_theme.dart
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Tokens de color WCAG 2.2 AA
-  static const Color azulElegante = Color(0xFF1A374D); // Primary
-  static const Color doradoEspejo  = Color(0xFFD4AF37); // Secondary
-  static const Color celesteBebe   = Color(0xFFB1D0E0); // Container
-  static const Color beigeSuave    = Color(0xFFF5F2E7); // Background
-  static const Color rojoError     = Color(0xFFFF6B6B); // Error
+  // Primitivos Cromáticos
+  static const Color azulElegante = Color(0xFF1A374D);
+  static const Color doradoEspejo = Color(0xFFD4AF37);
+  static const Color celesteBebe   = Color(0xFFB1D0E0);
+  static const Color beigeSuave    = Color(0xFFF5F2E7);
+  static const Color rojoError     = Color(0xFFFF6B6B);
+
+  // Tokens Dimensionales (Espaciados, Radios y Accesibilidad)
+  static const double radiusSm = 12.0;
+  static const double radiusMd = 20.0;
+  static const double radiusPill = 50.0;
+
+  static const double paddingSm = 8.0;
+  static const double paddingMd = 16.0;
+  static const double paddingLg = 24.0;
+
+  // Norma WCAG 2.2 AA / Android / iOS: Área táctil mínima
+  static const double minTouchTarget = 48.0;
 
   static ThemeData get lightTheme {
     return ThemeData(

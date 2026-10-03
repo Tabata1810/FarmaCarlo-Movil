@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppSearchBar extends StatelessWidget {
+class AppSearchBar extends StatefulWidget {
   final String placeholder;
   final String value;
   final ValueChanged<String> onChanged;
@@ -15,6 +15,33 @@ class AppSearchBar extends StatelessWidget {
   });
 
   @override
+  State<AppSearchBar> createState() => _AppSearchBarState();
+}
+
+class _AppSearchBarState extends State<AppSearchBar> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value);
+  }
+
+  @override
+  void didUpdateWidget(AppSearchBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value && _controller.text != widget.value) {
+      _controller.text = widget.value;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
@@ -25,18 +52,20 @@ class AppSearchBar extends StatelessWidget {
         border: Border.all(color: theme.colorScheme.primary.withOpacity(0.2)),
       ),
       child: TextField(
-        onChanged: onChanged,
+        controller: _controller,
+        onChanged: widget.onChanged,
         style: theme.textTheme.bodyMedium,
         decoration: InputDecoration(
-          hintText: placeholder,
-          hintStyle: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.5),
-          ),
+          hintText: widget.placeholder,
           prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
-          suffixIcon: value.isNotEmpty
+          suffixIcon: widget.value.isNotEmpty
               ? IconButton(
                   icon: const Icon(Icons.close),
-                  onPressed: onClear,
+                  semanticsLabel: 'Limpiar texto de búsqueda',
+                  onPressed: () {
+                    _controller.clear();
+                    if (widget.onClear != null) widget.onClear!();
+                  },
                 )
               : null,
           border: InputBorder.none,
