@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-import 'theme/app_theme.dart';
-import 'screens/inventory_catalog_screen.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
   runApp(const FarmaCarloApp());
@@ -12,10 +11,43 @@ class FarmaCarloApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'FarmaCarlo Móvil',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      home: const InventoryCatalogScreen(),
+      title: 'FarmaCarlo Móvil',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const WebScreen(),
+    );
+  }
+}
+
+class WebScreen extends StatefulWidget {
+  const WebScreen({super.key});
+
+  @override
+  State<WebScreen> createState() => _WebScreenState();
+}
+
+class _WebScreenState extends State<WebScreen> {
+  late final WebViewController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadRequest(
+        // Dirección de tu backend
+        Uri.parse('http://192.168.100.144:5000'), 
+      );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('FarmaCarlo Móvil'),
+        backgroundColor: const Color(0xFF1E3A8A),
+      ),
+      body: WebViewWidget(controller: controller),
     );
   }
 }
