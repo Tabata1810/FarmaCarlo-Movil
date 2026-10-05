@@ -36,7 +36,7 @@ class _WebScreenState extends State<WebScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
         // Dirección de tu backend
-        Uri.parse('http://192.168.100.144:5000'), 
+        Uri.parse('https://farmacarlo-movil.onrender.com'), 
       );
   }
 
