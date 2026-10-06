@@ -34,12 +34,17 @@ class _WebScreenState extends State<WebScreen> {
     super.initState();
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(
-        // Dirección de tu backend
-        Uri.parse('https://farmacarlo-movil.onrender.com'), 
-      );
-  }
-
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onWebResourceError: (WebResourceError error) {
+            debugPrint('Error al cargar la pagina: ${error.description}');
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse('https://farmacarlo-movil.onrender.com'));
+  } 
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
