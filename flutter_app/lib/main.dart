@@ -13,7 +13,9 @@ class FarmaCarloApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'FarmaCarlo Móvil',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
       home: const WebScreen(),
     );
   }
@@ -43,14 +45,21 @@ class _WebScreenState extends State<WebScreen> {
         ),
       )
       ..loadRequest(Uri.parse('https://farmacarlo-movil.onrender.com'));
-  } 
- 
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('FarmaCarlo Móvil'),
-        backgroundColor: const Color(0xFF1E3A8A),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              controller.reload();
+            },
+          ),
+        ],
       ),
       body: WebViewWidget(controller: controller),
     );
